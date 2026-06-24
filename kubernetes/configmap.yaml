@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appname-configmap
+  namespace: namespacename
+data:
+  your_app_url: some-text-value
+  database_url: appname-service.namespace # can reference resource in another Namespace
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appname-configmap
+  namespace: namespacename
+data:
+  # Creating a file with multi-line text which can be used as Volume in Deployment
+  your_app.conf: |
+    option1 value1
+    option2 value2
+    option3 value3

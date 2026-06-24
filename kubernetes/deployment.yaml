@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appname
+  namespace: namespacename
+  labels:
+    app: appname
+spec:
+  replicas: 1 # number of replicas
+  selector:
+    matchLabels:
+      app: appname
+  template:
+    metadata:
+      labels:
+        app: appname
+    spec:
+      containers:
+        - name: helloworld # name of the container
+          image: helloworld:latest # the image you want to run
+          # resources:
+          #   requests:
+          #     memory: 128Mi
+          #     cpu: 100m
+          #   limits:
+          #     memory: 256Mi
+          #     cpu: 500m
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ENV_VARIABLE_NAME_1
+              value: value_for_env_variable
+            - name: ENV_VARIABLE_NAME_2
+              valueFrom:
+                # Values from Secret
+                secretKeyRef:
+                  name: appname-secret # name of created Secret
+                  key: appname-username # value name from created Secret
+            - name: ENV_VARIABLE_NAME_3
+              valueFrom:
+                # Values from ConfigMap
+                configMapKeyRef:
+                  name: appname-configmap # name of created ConfigMap
+                  key: your_app_url # value name from created ConfigMap
+          volumeMounts:
+            # Using Persistent Storage
+            - name: vol-persistent-storage # name of the volume
+              mountPath: /var/www/html # path inside container
+            # Using Secret as storage
+            - name: vol-secret-dir
+              mountPath: /var/secret # path inside container
+              readOnly: true # data read only
+            # Using ConfigMap as storage
+            - name: vol-config-dir
+              mountPath: /etc/config # path inside container
+            - name: vol-config-dir-file
+              mountPath: /etc/config # path inside container
+              subPath: your-file.conf # you must add this line to ONLY mount the specific file
+      volumes:
+        # Using Persistent Storage
+        - name: vol-persistent-storage
+          persistentVolumeClaim:
+            claimName: pvc-name # name of the PersistentVolumeClaim
+        # Using Secret as storage
+        - name: vol-secret-dir
+          secret:
+            secretName: secret-file
+        # Using ConfigMap as storage
+        - name: vol-config-dir
+          configMap:
+            name: config-map-file

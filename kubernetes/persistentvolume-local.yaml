@@ -1,0 +1,38 @@
+# IMPORTANT: Persistent Volume must be created before Persistent Volume Claim.
+#
+# When using remote StorageClass (like S3), you don't need to create Persistent Volume.
+# Using Persistent Volume Claim with Storage Class will create Persistent Volume automatically.
+#
+# There are problems with dynamic provisioning (StorageClass) when using local storage.
+# So for local storage Persistent Volume should be created.
+
+# Example for local storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: local-storage-class-name
+  local:
+    path: /mnt/disks/ssd1 # enter path to local directory on specific node
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - your-host-name # specify the node in which local storage will be used
+
+
+# List cluster nodes with labels to find node hostname:
+# $ kubectl get nodes --show-labels
+#
+# STATUS    ROLES    AGE     VERSION        LABELS
+# Ready     <none>   1d      v1.13.0        ...,kubernetes.io/hostname=your-host-name

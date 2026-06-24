@@ -1,0 +1,13 @@
+# IMPORTANT: Storage Class must be created before Persistent Volume Claim.
+#
+# When using local volume, it is recommended to create a StorageClass with
+# `volumeBindingMode` set to `WaitForFirstConsumer` to delay volume binding
+# until a Pod is actually scheduled to an appropriate node.
+
+# Example for local storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage-class-name
+provisioner: kubernetes.io/no-provisioner # setting for local storage
+volumeBindingMode: WaitForFirstConsumer # setting for local storage

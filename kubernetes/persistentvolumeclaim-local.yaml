@@ -1,0 +1,14 @@
+# IMPORTANT: Persistent Volume Claim must be created before Deployment.
+
+# Example for local storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-name
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage-class-name
+  resources:
+    requests:
+      storage: 100Mi
