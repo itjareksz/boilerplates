@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appname-service
+  namespace: namespacename
+spec:
+  selector:
+    app: appname
+  # ------------------------------------
+  # # ClusterIP means this service can be accessed by any pod in the cluster
+  # type: ClusterIP
+  # ports:
+  # - name: http
+  #   port: 80
+  #   targetPort: 8080  # should match containerPort in Deployment
+  #   protocol: TCP  # optional protocol
+  # - name: https
+  #   port: 443
+  #   targetPort: 8083  # should match containerPort in Deployment
+  #   protocol: TCP  # optional protocol
+  # ------------------------------------
+  # # NodePort is available from outside, ports are open on every node, don't use in production, use LoadBalancer instead
+  # type: NodePort
+  # ports:
+  # - name: http
+  #   port: 80
+  #   targetPort: 8080  # should match containerPort in Deployment
+  #   protocol: TCP  # optional protocol
+  #   nodePort: 30001  # port number accessible from outside, must be between 30000-32767
+  # ------------------------------------
+  # # LoadBalancer should be used with cloud provider which support external load balancers and is available from outside
+  # # For local testing use MetalLB as LoadBalancer
+  # type: LoadBalancer
+  # ports:
+  # - name: http
+  #   port: 80
+  #   targetPort: 8080  # should match containerPort in Deployment
+  #   protocol: TCP  # optional protocol
+  # ------------------------------------
+  # type: ExternalName
+  #   externalName: my.database.example.com  # map a Service to a DNS name

@@ -1,0 +1,82 @@
+# NOTE: Ingress Controller should be installed for Ingress to work.
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: appname-ingress
+  namespace: namespacename
+spec:
+  rules:
+    - host: your-hostname.com # remember to map domain name using DNS server to Kubernetes node IP address as entrypoint
+      http:
+        paths:
+          # Example path `your-hostname.com`
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: appname-service # reference to created Service
+                port:
+                  number: 80 # Service port number
+          # Example path `your-hostname.com/grafana`
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana-service # reference to created Service
+                port:
+                  number: 3000 # Service port number
+    - host: foo.bar.com # remember to map domain name using DNS server to Kubernetes node IP address as entrypoint
+      http:
+        paths:
+          # Example path `foo.bar.com`
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: appname-service # reference to created Service
+                port:
+                  number: 80 # Service port number
+---
+# Config with self-signed SSL Certificate
+
+# Secret with self-signed certificate
+# Certificate must contain domain name in Common Name (CN)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: appname-secret-tls
+  namespace: namespacename
+stringData:
+  tls.crt: |
+    -----BEGIN CERTIFICATE-----
+    ...your certificate content...
+    -----END CERTIFICATE-----
+  tls.key: |
+    -----BEGIN PRIVATE KEY-----
+    ...your key content...
+    -----END PRIVATE KEY-----
+type: kubernetes.io/tls
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tls-appname-ingress
+  namespace: namespacename
+spec:
+  tls:
+    - hosts:
+        - foo.bar.com
+      secretName: appname-secret-tls # reference to Secret with certificate
+  rules:
+    - host: foo.bar.com # remember to map domain name using DNS server to Kubernetes node IP address as entrypoint
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: appname-service # reference to created Service
+                port:
+                  number: 80 # Service port number
