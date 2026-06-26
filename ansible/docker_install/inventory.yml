@@ -1,0 +1,7 @@
+servers:
+  hosts:
+    target_host1:
+      ansible_host: 192.168.xxx.yyy # domain name or IP address used to connect to the target host via SSH
+      ansible_user: xxxxx # username used to connect to the target host via SSH
+      ansible_ssh_private_key_file: ~/.ssh/id_ed25519_xxxxx # SSH private key path and name
+      privilege_escalation_method: sudo # set to sudo or su according to your target host
